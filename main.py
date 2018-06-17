@@ -3,9 +3,9 @@ import ga_method as ga
 import matplotlib.pyplot as plt
 import numpy as np
 import sys
-from parmap import parmap
+import os
 
-def process_result(result, draw, iterations, debug_time=False):        
+def process_result(result, draw, iterations, file_name, debug_time=False):
     min_sol = None
     best_stats = None
     scores = []
@@ -31,12 +31,17 @@ def process_result(result, draw, iterations, debug_time=False):
                 min_sol = sol
                 best_stats = stats
                 
-    print "GA best solution:"
+    #print "GA best solution:"
+    orig_stdout = sys.stdout
+    f = open(file_name, 'w')
+    sys.stdout = f
     min_sol.print_sol()
+    sys.stdout = orig_stdout
+    f.close()
     if (debug_time):
         time = min_sol.calculate_avail_time(min_sol.routes)
         min_sol.print_avail_time(min_sol.routes, time)
-    print "GA average solution: %.2f/%.2f" % (sum(scores) / len(scores), sum(num_vehicles) / len(num_vehicles))
+    #print "GA average solution: %.2f/%.2f" % (sum(scores) / len(scores), sum(num_vehicles) * 1.0 / len(num_vehicles))
     
     if (draw):
         best, aver = zip(*best_stats)
@@ -60,7 +65,8 @@ def main():
         sys.exit()
 
     f = sys.argv[1]
-    draw = True
+    output = os.path.splitext(f)[0] + '.out'
+    draw = False
     iterations = 10
     if num_args > 3:    
         draw = (sys.argv[2] == "True")
@@ -69,11 +75,11 @@ def main():
     tour_manager = init(f)
 
     def run(num):
-        print "Running iteration %d" % (num + 1)
-        return ga.ga_sol(tour_manager, 50, 50, 300)
+#        print "Running iteration %d" % (num + 1)
+        return ga.ga_sol(tour_manager, 100, 50, 300)    
 
     result = map(run, range(iterations))
-    process_result(result, draw, iterations)
+    process_result(result, draw, iterations, output)
 
 if __name__=='__main__':
     main()
