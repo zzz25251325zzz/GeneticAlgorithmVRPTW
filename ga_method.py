@@ -182,9 +182,10 @@ class Solution(object):
 
     def print_sol(self):
         for i in range(len(self.routes)):
-            cost = [x.demand for x in self.routes[i]]
-            print "Vehicle %d (%d/%d): %s" % (i + 1, sum(cost), self.capacity, str([x.city_id for x in self.routes[i]]))
+            cost = [x.demand for x in self.routes[i]]  
         print "Total cost: %.3f" % self.score()
+        for i in range(len(self.routes)):
+            print "Vehicle %d (%d/%d): %s" % (i + 1, sum(cost), self.capacity, str([x.city_id for x in self.routes[i]]))
         if len(self.unsolved) != 0:
             print "Warning: this solution has unresolved cities: %s" % (str([x.city_id for x in self.unsolved]))
 
